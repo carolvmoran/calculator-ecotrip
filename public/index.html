@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de emissões de CO2 para viagens e transporte">
+    <title>🍃 Calculadora de Emissão de CO2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🍃 Calculadora de Emissão de CO2</h1>
+        <p class="subtitle">
+            Calcule o impacto ambiental das suas viagens e descubra quanto CO2 você emite em seus deslocamentos
+        </p>
+    </header>
+
+    <main>
+        <section class="calculator-section">
+            <h2>Calcular Emissões</h2>
+            <form id="emission-form">
+                <div class="form-group">
+                    <label for="origem">Cidade de Origem:</label>
+                    <input 
+                        type="text" 
+                        id="origem" 
+                        name="origem" 
+                        placeholder="Ex: São Paulo"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="destino">Cidade de Destino:</label>
+                    <input 
+                        type="text" 
+                        id="destino" 
+                        name="destino" 
+                        placeholder="Ex: Rio de Janeiro"
+                        required
+                    >
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input 
+                            type="checkbox" 
+                            id="manual-distance" 
+                            name="manual-distance"
+                        >
+                        Inserir distância manualmente
+                    </label>
+                </div>
+
+                <div class="form-group" id="distance-group">
+                    <label for="distancia">Distância (km):</label>
+                    <input 
+                        type="number" 
+                        id="distancia" 
+                        name="distancia" 
+                        min="0" 
+                        step="0.1"
+                        placeholder="Ex: 430"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="transporte">Meio de Transporte:</label>
+                    <select id="transporte" name="transporte" required>
+                        <option value="">Selecione...</option>
+                        <option value="bicicleta">🚴 Bicicleta</option>
+                        <option value="carro">🚗 Carro</option>
+                        <option value="onibus">🚌 Ônibus</option>
+                        <option value="caminhao">🚚 Caminhão</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-calculate">Calcular Emissão</button>
+            </form>
+
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </section>
+
+        <section class="results-section" id="results" style="display: none;">
+            <h2>Resultado</h2>
+            <div class="result-card">
+                <div class="trip-info">
+                    <p><strong>Origem:</strong> <span id="result-origem"></span></p>
+                    <p><strong>Destino:</strong> <span id="result-destino"></span></p>
+                    <p><strong>Distância:</strong> <span id="result-distancia"></span> km</p>
+                    <p><strong>Transporte:</strong> <span id="result-transporte"></span></p>
+                </div>
+                
+                <div class="emission-result">
+                    <p class="emission-value">
+                        <strong>Emissão de CO2:</strong> 
+                        <span id="co2-result">0</span> kg
+                    </p>
+                    <p class="emission-message" id="emission-message"></p>
+                    <p class="emission-info" id="trees-info" style="display: none;">
+                        🌳 Seriam necessárias aproximadamente 
+                        <strong><span id="trees-equivalent">0</span> árvores</strong> 
+                        para compensar essa emissão em um ano.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 EcoTrip Calculator. Ajudando você a fazer escolhas mais sustentáveis.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
