@@ -141,6 +141,12 @@ h2 {
   transform: translateY(0);
 }
 
+.btn-calculate:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .error-message {
   background: #ffe5e5;
   color: var(--danger-color);
@@ -224,6 +230,58 @@ footer {
 
 .results-section {
   animation: fadeIn 0.5s ease;
+}
+
+/* Botões de Transporte */
+.transport-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.transport-btn {
+  padding: 15px 20px;
+  background: white;
+  border: 2px solid #dfe6e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.transport-btn:hover {
+  background: var(--light-color);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.transport-btn.active {
+  background: var(--primary-color);
+  border-color: var(--secondary-color);
+  color: white;
+}
+
+/* Result Details */
+.result-details {
+  margin-top: 15px;
+}
+
+.result-details p {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #dfe6e9;
+}
+
+.result-details p:last-child {
+  border-bottom: none;
 }
 
 /* Responsividade */

@@ -24,30 +24,76 @@
         <h2>Calcular Emissões</h2>
         <form id="emission-form">
           <div class="form-group">
-            <label for="transport-type">Tipo de Transporte:</label>
-            <select id="transport-type" name="transport-type" required>
-              <option value="">Selecione...</option>
-              <option value="car">Carro</option>
-              <option value="bus">Ônibus</option>
-              <option value="train">Trem</option>
-              <option value="plane">Avião</option>
-              <option value="motorcycle">Moto</option>
-            </select>
+            <label for="origem">Origem:</label>
+            <input
+              type="text"
+              id="origem"
+              name="origem"
+              placeholder="Ex: São Paulo"
+              required
+            />
           </div>
 
           <div class="form-group">
+            <label for="destino">Destino:</label>
+            <input
+              type="text"
+              id="destino"
+              name="destino"
+              placeholder="Ex: Rio de Janeiro"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="manual-distance" />
+              Inserir distância manualmente
+            </label>
+          </div>
+
+          <div class="form-group" id="distance-group" style="display: none">
             <label for="distance">Distância (km):</label>
             <input
               type="number"
               id="distance"
               name="distance"
-              min="0"
+              min="0.1"
               step="0.1"
-              required
+              placeholder="Ex: 430"
             />
           </div>
 
-          <button type="submit" class="btn-calculate">Calcular</button>
+          <div class="form-group">
+            <label>Meio de Transporte:</label>
+            <div class="transport-buttons">
+              <button type="button" class="transport-btn" data-transport="bike">
+                🚴 Bicicleta
+              </button>
+              <button type="button" class="transport-btn" data-transport="car">
+                🚗 Carro
+              </button>
+              <button type="button" class="transport-btn" data-transport="bus">
+                🚌 Ônibus
+              </button>
+              <button
+                type="button"
+                class="transport-btn"
+                data-transport="truck"
+              >
+                🚚 Caminhão
+              </button>
+            </div>
+            <input type="hidden" id="transport" name="transport" />
+          </div>
+
+          <button type="submit" class="btn-calculate">Calcular Emissão</button>
+
+          <div
+            id="error-message"
+            class="error-message"
+            style="display: none"
+          ></div>
         </form>
       </section>
 
@@ -56,13 +102,19 @@
         <div class="result-card">
           <p class="emission-value">
             <strong>Emissão de CO2:</strong>
-            <span id="co2-result">0</span> kg
+            <span id="co2-result">0</span> <span>kg CO2</span>
           </p>
-          <p class="emission-info">
-            Isso equivale a aproximadamente
-            <span id="trees-equivalent">0</span> árvores necessárias para
-            compensar essa emissão.
-          </p>
+          <div class="result-details">
+            <p><strong>Origem:</strong> <span id="result-origem">-</span></p>
+            <p><strong>Destino:</strong> <span id="result-destino">-</span></p>
+            <p>
+              <strong>Distância:</strong> <span id="result-distance">-</span> km
+            </p>
+            <p>
+              <strong>Transporte:</strong>
+              <span id="result-transport">-</span>
+            </p>
+          </div>
         </div>
       </section>
     </main>
