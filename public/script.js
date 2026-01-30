@@ -37,24 +37,15 @@ const transportNames = {
 // Carregar estados do IBGE
 async function loadEstados() {
   try {
-    console.log("🔍 Iniciando carregamento de estados...");
-    console.log("📍 Elementos DOM:", {
-      origemEstadoSelect,
-      destinoEstadoSelect,
-    });
-
     if (!origemEstadoSelect || !destinoEstadoSelect) {
-      console.error("❌ Selects de estado não encontrados no DOM!");
+      console.error("Selects de estado não encontrados no DOM!");
       return;
     }
 
     showLoading("Carregando estados...");
 
-    console.log("🌐 Fazendo requisição para /api/estados...");
     const response = await fetch("/api/estados");
     const estados = await response.json();
-
-    console.log(`✅ ${estados.length} estados carregados:`, estados);
 
     // Preencher ambos os selects de estado
     [origemEstadoSelect, destinoEstadoSelect].forEach((select) => {
@@ -68,10 +59,9 @@ async function loadEstados() {
       });
     });
 
-    console.log("✅ Selects de estado preenchidos!");
     hideLoading();
   } catch (error) {
-    console.error("❌ Erro ao carregar estados:", error);
+    console.error("Erro ao carregar estados:", error);
     showError("Erro ao carregar lista de estados. Tente novamente.");
   }
 }
@@ -473,17 +463,5 @@ function showComparison(comparison, selectedTransport) {
 
 // Carregar estados quando a página carregar
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 DOM carregado! Iniciando aplicação...");
-  console.log("📍 Verificando elementos DOM:", {
-    form,
-    origemEstadoSelect,
-    origemCidadeSelect,
-    destinoEstadoSelect,
-    destinoCidadeSelect,
-    manualDistanceCheckbox,
-    distanceInput,
-    errorMessage,
-    resultsSection,
-  });
   loadEstados();
 });
