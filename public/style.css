@@ -314,6 +314,107 @@ footer {
   border-bottom: none;
 }
 
+/* Comparison Section */
+.comparison-section {
+  margin-top: 30px;
+  padding: 25px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.comparison-section h3 {
+  color: var(--dark-color);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comparison-subtitle {
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.comparison-item {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.comparison-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.comparison-item.selected {
+  border-color: var(--primary-color);
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+.comparison-item .icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.comparison-item .transport-name {
+  font-weight: bold;
+  color: var(--dark-color);
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.comparison-item .emission-value {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.comparison-item .emission-unit {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  display: block;
+  margin-top: 4px;
+}
+
+.comparison-item.selected .selected-badge {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.sustainability-tip {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+  line-height: 1.6;
+}
+
+.sustainability-tip strong {
+  color: #664d03;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   header h1 {
@@ -331,5 +432,13 @@ footer {
 
   h2 {
     font-size: 1.5rem;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-section h3 {
+    font-size: 1.3rem;
   }
 }

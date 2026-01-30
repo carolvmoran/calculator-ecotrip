@@ -328,11 +328,13 @@ if (form) {
 
       // Mostrar resultado
       showResult({
-        emission: data.emission,
+        emission: data.selectedTransport.emission,
         distance: data.distance,
         origem: `${origemCidade} - ${origemEstado}`,
         destino: `${destinoCidade} - ${destinoEstado}`,
-        transport: selectedTransport,
+        transport: data.selectedTransport.type,
+        selectedTransport: data.selectedTransport,
+        comparison: data.comparison,
       });
     } catch (error) {
       hideLoading();
@@ -401,11 +403,47 @@ function showResult(data) {
   if (resultTransport)
     resultTransport.textContent = transportNames[data.transport];
 
+  // Preencher comparação entre meios de transporte
+  if (data.comparison) {
+    showComparison(data.comparison, data.transport);
+  }
+
   // Mostrar seção de resultados
   resultsSection.style.display = "block";
 
   // Scroll suave para o resultado
   resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function showComparison(comparison, selectedTransport) {
+  const comparisonGrid = document.getElementById("comparison-grid");
+  if (!comparisonGrid) return;
+
+  // Limpar conteúdo anterior
+  comparisonGrid.innerHTML = "";
+
+  // comparison agora é um array
+  if (!Array.isArray(comparison)) {
+    console.error("Comparison deve ser um array");
+    return;
+  }
+
+  // Criar cards para cada meio de transporte
+  comparison.forEach((transportData) => {
+    const isSelected = transportData.key === selectedTransport;
+
+    const card = document.createElement("div");
+    card.className = `comparison-item ${isSelected ? "selected" : ""}`;
+    card.innerHTML = `
+      <span class="icon">${transportData.icon}</span>
+      <div class="transport-name">${transportData.type}</div>
+      <div class="emission-value">${transportData.emission}</div>
+      <span class="emission-unit">kg CO₂</span>
+      ${isSelected ? '<div class="selected-badge">✓ Selecionado</div>' : ""}
+    `;
+
+    comparisonGrid.appendChild(card);
+  });
 }
 
 // ========================================

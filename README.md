@@ -30,6 +30,7 @@ O projeto tem como objetivo **conscientizar** sobre o impacto ambiental das esco
 - ✅ **Geocodificação automática** usando Nominatim (OpenStreetMap)
 - ✅ **Fórmula de Haversine** para cálculo preciso de distâncias geográficas
 - ✅ **Fator de correção de rodovias (1.25x)** - distâncias mais realistas considerando curvas e desvios das estradas
+- ✅ **Comparação entre meios de transporte** - veja as emissões de TODOS os transportes para a mesma viagem
 - ✅ Cálculo de emissões de CO₂ por quilômetro rodado
 - ✅ Suporte para 4 meios de transporte:
   - 🚴 **Bicicleta** (0 kg CO₂/km)
@@ -42,6 +43,7 @@ O projeto tem como objetivo **conscientizar** sobre o impacto ambiental das esco
 - ✅ API RESTful para integração com outros sistemas
 - ✅ **Cache de coordenadas** para melhor performance
 - ✅ Mensagens de erro claras e específicas
+- ✅ **Dicas de sustentabilidade** incentivando escolhas ecológicas
 
 ---
 

@@ -276,15 +276,69 @@ app.post("/calculate", async (req, res) => {
       });
     }
 
-    // Cálculo da emissão
+    // Cálculo da emissão para o transporte selecionado
     const emissionFactor = emissionFactors[transport];
     const emission = parseFloat((distance * emissionFactor).toFixed(2));
 
+    // Mapeamento de tipos para nomes amigáveis
+    const transportNames = {
+      bike: "Bicicleta",
+      car: "Carro",
+      bus: "Ônibus",
+      truck: "Caminhão",
+    };
+
+    const transportIcons = {
+      bike: "🚴",
+      car: "🚗",
+      bus: "🚌",
+      truck: "🚚",
+    };
+
+    // Calcular comparação com TODOS os meios de transporte (formato array)
+    const comparison = [
+      {
+        type: "Bicicleta",
+        key: "bike",
+        icon: "🚴",
+        emission: parseFloat((distance * emissionFactors.bike).toFixed(2)),
+        factor: emissionFactors.bike,
+      },
+      {
+        type: "Carro",
+        key: "car",
+        icon: "🚗",
+        emission: parseFloat((distance * emissionFactors.car).toFixed(2)),
+        factor: emissionFactors.car,
+      },
+      {
+        type: "Ônibus",
+        key: "bus",
+        icon: "🚌",
+        emission: parseFloat((distance * emissionFactors.bus).toFixed(2)),
+        factor: emissionFactors.bus,
+      },
+      {
+        type: "Caminhão",
+        key: "truck",
+        icon: "🚚",
+        emission: parseFloat((distance * emissionFactors.truck).toFixed(2)),
+        factor: emissionFactors.truck,
+      },
+    ];
+
     // Resposta
     res.json({
-      emission,
-      unit: "kg CO2",
       distance: parseFloat(distance.toFixed(2)),
+      unit: "kg CO2",
+      selectedTransport: {
+        type: transport,
+        name: transportNames[transport],
+        icon: transportIcons[transport],
+        emission: emission,
+        factor: emissionFactor,
+      },
+      comparison,
     });
   } catch (error) {
     console.error("Erro ao calcular emissões:", error);
