@@ -324,6 +324,7 @@ if (form) {
         destino: `${destinoCidade} - ${destinoEstado}`,
         transport: data.selectedTransport.type,
         selectedTransport: data.selectedTransport,
+        carbonCredits: data.carbonCredits,
         comparison: data.comparison,
       });
     } catch (error) {
