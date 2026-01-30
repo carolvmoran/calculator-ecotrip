@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Calculadora de emissões de CO2 para viagens e transporte"
+    />
+    <title>🍃 Calculadora de Emissão de CO2</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🍃 Calculadora de Emissão de CO2</h1>
+      <p class="subtitle">
+        Calcule o impacto ambiental das suas viagens e descubra quanto CO2 você
+        emite em seus deslocamentos
+      </p>
+    </header>
+
+    <main>
+      <section class="calculator-section">
+        <h2>Calcular Emissões</h2>
+        <form id="emission-form">
+          <div class="form-group">
+            <label for="transport-type">Tipo de Transporte:</label>
+            <select id="transport-type" name="transport-type" required>
+              <option value="">Selecione...</option>
+              <option value="car">Carro</option>
+              <option value="bus">Ônibus</option>
+              <option value="train">Trem</option>
+              <option value="plane">Avião</option>
+              <option value="motorcycle">Moto</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="distance">Distância (km):</label>
+            <input
+              type="number"
+              id="distance"
+              name="distance"
+              min="0"
+              step="0.1"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-calculate">Calcular</button>
+        </form>
+      </section>
+
+      <section class="results-section" id="results" style="display: none">
+        <h2>Resultado</h2>
+        <div class="result-card">
+          <p class="emission-value">
+            <strong>Emissão de CO2:</strong>
+            <span id="co2-result">0</span> kg
+          </p>
+          <p class="emission-info">
+            Isso equivale a aproximadamente
+            <span id="trees-equivalent">0</span> árvores necessárias para
+            compensar essa emissão.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        &copy; 2026 EcoTrip Calculator. Ajudando você a fazer escolhas mais
+        sustentáveis.
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
