@@ -7,7 +7,12 @@
     "start": "node server/index.js",
     "dev": "nodemon server/index.js"
   },
-  "keywords": ["co2", "calculator", "eco", "sustainability"],
+  "keywords": [
+    "co2",
+    "calculator",
+    "eco",
+    "sustainability"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {

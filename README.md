@@ -15,11 +15,13 @@ Aplicação fullstack para calcular emissões de CO₂ em viagens de acordo com 
 ## 🛠️ Stack Tecnológica
 
 ### Backend
+
 - Node.js
 - Express.js
 - CORS
 
 ### Frontend
+
 - HTML5 Semântico
 - CSS3 (com variáveis CSS e animações)
 - JavaScript Vanilla (ES6+)
@@ -62,6 +64,7 @@ npm run dev
 ### 3. Acessar a Aplicação
 
 Abra seu navegador e acesse:
+
 ```
 http://localhost:3000
 ```
@@ -73,6 +76,7 @@ http://localhost:3000
 Calcula a emissão de CO₂ para uma viagem.
 
 **Request Body:**
+
 ```json
 {
   "origem": "São Paulo",
@@ -83,6 +87,7 @@ Calcula a emissão de CO₂ para uma viagem.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -106,7 +111,7 @@ Retorna os fatores de emissão utilizados nos cálculos.
 ## 🌍 Fatores de Emissão
 
 | Transporte | Emissão (kg CO₂/km) |
-|------------|---------------------|
+| ---------- | ------------------- |
 | Bicicleta  | 0                   |
 | Carro      | 0.192               |
 | Ônibus     | 0.089               |
