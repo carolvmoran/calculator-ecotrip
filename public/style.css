@@ -50,6 +50,36 @@ main {
   margin: 0 auto;
 }
 
+/* Grupos de localização */
+.location-group {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.location-group h3 {
+  font-size: 1.3rem;
+  color: var(--dark-color);
+  margin-bottom: 15px;
+}
+
+.distance-section {
+  background: #fff3cd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #ffc107;
+}
+
+.distance-info {
+  display: block;
+  margin-top: 5px;
+  color: #856404;
+  font-style: italic;
+}
+
 .calculator-section,
 .results-section {
   background: white;

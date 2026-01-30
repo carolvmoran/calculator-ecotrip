@@ -1,29 +1,26 @@
 // Elementos do DOM
 const form = document.getElementById("emission-form");
 const manualDistanceCheckbox = document.getElementById("manual-distance");
-const distanceGroup = document.getElementById("distance-group");
 const distanceInput = document.getElementById("distance");
-const origemInput = document.getElementById("origem");
-const destinoInput = document.getElementById("destino");
+
+// Selects de estados e cidades
+const origemEstadoSelect = document.getElementById("origem-estado");
+const origemCidadeSelect = document.getElementById("origem-cidade");
+const destinoEstadoSelect = document.getElementById("destino-estado");
+const destinoCidadeSelect = document.getElementById("destino-cidade");
+
+// Transporte
 const transportButtons = document.querySelectorAll(".transport-btn");
 const transportInput = document.getElementById("transport");
+
+// Mensagens e resultados
 const errorMessage = document.getElementById("error-message");
 const resultsSection = document.getElementById("results");
 
-// Verificar se todos os elementos necessários existem
-if (
-  !form ||
-  !manualDistanceCheckbox ||
-  !distanceGroup ||
-  !distanceInput ||
-  !origemInput ||
-  !destinoInput ||
-  !transportInput ||
-  !errorMessage ||
-  !resultsSection
-) {
-  console.error("Erro: Elementos do formulário não foram encontrados no HTML");
-}
+// Estado da aplicação
+let selectedTransport = null;
+let isManualDistance = false;
+let calculatedDistance = null;
 
 // Mapear valores para nomes amigáveis
 const transportNames = {
@@ -33,19 +30,211 @@ const transportNames = {
   truck: "🚚 Caminhão",
 };
 
-// Variável para armazenar transporte selecionado
-let selectedTransport = null;
+// ========================================
+// FUNÇÕES DE CARREGAMENTO DE DADOS
+// ========================================
 
-// Controlar checkbox de distância manual
-if (manualDistanceCheckbox && distanceGroup && distanceInput) {
-  manualDistanceCheckbox.addEventListener("change", (e) => {
-    if (e.target.checked) {
-      distanceGroup.style.display = "block";
-      distanceInput.required = true;
+// Carregar estados do IBGE
+async function loadEstados() {
+  try {
+    console.log("🔍 Iniciando carregamento de estados...");
+    console.log("📍 Elementos DOM:", {
+      origemEstadoSelect,
+      destinoEstadoSelect,
+    });
+
+    if (!origemEstadoSelect || !destinoEstadoSelect) {
+      console.error("❌ Selects de estado não encontrados no DOM!");
+      return;
+    }
+
+    showLoading("Carregando estados...");
+
+    console.log("🌐 Fazendo requisição para /api/estados...");
+    const response = await fetch("/api/estados");
+    const estados = await response.json();
+
+    console.log(`✅ ${estados.length} estados carregados:`, estados);
+
+    // Preencher ambos os selects de estado
+    [origemEstadoSelect, destinoEstadoSelect].forEach((select) => {
+      select.innerHTML = '<option value="">Selecione um estado</option>';
+      estados.forEach((estado) => {
+        const option = document.createElement("option");
+        option.value = estado.sigla;
+        option.textContent = estado.nome;
+        option.dataset.estadoId = estado.id;
+        select.appendChild(option);
+      });
+    });
+
+    console.log("✅ Selects de estado preenchidos!");
+    hideLoading();
+  } catch (error) {
+    console.error("❌ Erro ao carregar estados:", error);
+    showError("Erro ao carregar lista de estados. Tente novamente.");
+  }
+}
+
+// Carregar municípios de um estado
+async function loadMunicipios(estadoId, cidadeSelect) {
+  try {
+    cidadeSelect.disabled = true;
+    cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+
+    const response = await fetch(`/api/municipios/${estadoId}`);
+    const municipios = await response.json();
+
+    cidadeSelect.innerHTML = '<option value="">Selecione uma cidade</option>';
+    municipios.forEach((municipio) => {
+      const option = document.createElement("option");
+      option.value = municipio.nome;
+      option.textContent = municipio.nome;
+      cidadeSelect.appendChild(option);
+    });
+
+    cidadeSelect.disabled = false;
+  } catch (error) {
+    console.error("Erro ao carregar municípios:", error);
+    cidadeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+    showError("Erro ao carregar lista de cidades. Tente novamente.");
+  }
+}
+
+// Calcular distância automaticamente
+async function calculateDistance() {
+  if (isManualDistance) {
+    return; // Usuário optou por inserir manualmente
+  }
+
+  const origemCidade = origemCidadeSelect.value;
+  const origemEstado =
+    origemEstadoSelect.options[origemEstadoSelect.selectedIndex].textContent;
+  const destinoCidade = destinoCidadeSelect.value;
+  const destinoEstado =
+    destinoEstadoSelect.options[destinoEstadoSelect.selectedIndex].textContent;
+
+  if (!origemCidade || !destinoCidade) {
+    return; // Ainda não selecionou todas as cidades
+  }
+
+  try {
+    showLoading("Calculando distância...");
+
+    const response = await fetch("/api/calculate-distance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        origemCidade,
+        origemEstado,
+        destinoCidade,
+        destinoEstado,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Erro ao calcular distância");
+    }
+
+    calculatedDistance = data.distance;
+    distanceInput.value = data.distance;
+
+    hideLoading();
+  } catch (error) {
+    console.error("Erro ao calcular distância:", error);
+    hideLoading();
+    showError(error.message + " Por favor, insira a distância manualmente.");
+
+    // Habilitar modo manual
+    manualDistanceCheckbox.checked = true;
+    isManualDistance = true;
+    distanceInput.readOnly = false;
+    distanceInput.placeholder = "Digite a distância em km";
+    distanceInput.required = true;
+  }
+}
+
+// ========================================
+// EVENT LISTENERS
+// ========================================
+
+// Quando selecionar estado de origem
+if (origemEstadoSelect) {
+  origemEstadoSelect.addEventListener("change", (e) => {
+    const selectedOption = e.target.options[e.target.selectedIndex];
+    const estadoId = selectedOption.dataset.estadoId;
+
+    if (estadoId) {
+      loadMunicipios(estadoId, origemCidadeSelect);
     } else {
-      distanceGroup.style.display = "none";
-      distanceInput.required = false;
+      origemCidadeSelect.innerHTML =
+        '<option value="">Primeiro selecione o estado</option>';
+      origemCidadeSelect.disabled = true;
+    }
+
+    // Limpar distância calculada
+    if (!isManualDistance) {
       distanceInput.value = "";
+      calculatedDistance = null;
+    }
+  });
+}
+
+// Quando selecionar estado de destino
+if (destinoEstadoSelect) {
+  destinoEstadoSelect.addEventListener("change", (e) => {
+    const selectedOption = e.target.options[e.target.selectedIndex];
+    const estadoId = selectedOption.dataset.estadoId;
+
+    if (estadoId) {
+      loadMunicipios(estadoId, destinoCidadeSelect);
+    } else {
+      destinoCidadeSelect.innerHTML =
+        '<option value="">Primeiro selecione o estado</option>';
+      destinoCidadeSelect.disabled = true;
+    }
+
+    // Limpar distância calculada
+    if (!isManualDistance) {
+      distanceInput.value = "";
+      calculatedDistance = null;
+    }
+  });
+}
+
+// Quando selecionar cidade de origem
+if (origemCidadeSelect) {
+  origemCidadeSelect.addEventListener("change", () => {
+    calculateDistance();
+  });
+}
+
+// Quando selecionar cidade de destino
+if (destinoCidadeSelect) {
+  destinoCidadeSelect.addEventListener("change", () => {
+    calculateDistance();
+  });
+}
+
+// Checkbox de distância manual
+if (manualDistanceCheckbox) {
+  manualDistanceCheckbox.addEventListener("change", (e) => {
+    isManualDistance = e.target.checked;
+
+    if (isManualDistance) {
+      distanceInput.readOnly = false;
+      distanceInput.placeholder = "Digite a distância em km";
+      distanceInput.required = true;
+      distanceInput.value = "";
+    } else {
+      distanceInput.readOnly = true;
+      distanceInput.placeholder = "Calculada automaticamente";
+      distanceInput.required = false;
+      calculateDistance(); // Recalcular
     }
   });
 }
@@ -76,155 +265,166 @@ if (transportButtons.length > 0) {
   });
 }
 
-// Função para exibir erro
+// Submit do formulário
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Validações
+    if (!selectedTransport) {
+      showError("Por favor, selecione um meio de transporte");
+      return;
+    }
+
+    const origemCidade = origemCidadeSelect.value;
+    const origemEstado = origemEstadoSelect.value;
+    const destinoCidade = destinoCidadeSelect.value;
+    const destinoEstado = destinoEstadoSelect.value;
+
+    if (!origemCidade || !origemEstado || !destinoCidade || !destinoEstado) {
+      showError("Por favor, selecione as cidades de origem e destino");
+      return;
+    }
+
+    let distance = parseFloat(distanceInput.value);
+
+    if (!distance || distance <= 0) {
+      showError(
+        "Por favor, aguarde o cálculo da distância ou insira-a manualmente",
+      );
+      return;
+    }
+
+    // Enviar para o backend
+    try {
+      showLoading("Calculando emissões de CO₂...");
+
+      const response = await fetch("/calculate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          distance,
+          transport: selectedTransport,
+          origemCidade,
+          origemEstado:
+            origemEstadoSelect.options[origemEstadoSelect.selectedIndex]
+              .textContent,
+          destinoCidade,
+          destinoEstado:
+            destinoEstadoSelect.options[destinoEstadoSelect.selectedIndex]
+              .textContent,
+        }),
+      });
+
+      const data = await response.json();
+
+      hideLoading();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao calcular emissões");
+      }
+
+      // Mostrar resultado
+      showResult({
+        emission: data.emission,
+        distance: data.distance,
+        origem: `${origemCidade} - ${origemEstado}`,
+        destino: `${destinoCidade} - ${destinoEstado}`,
+        transport: selectedTransport,
+      });
+    } catch (error) {
+      hideLoading();
+      console.error("Erro:", error);
+      showError(error.message || "Erro ao calcular emissões. Tente novamente.");
+    }
+  });
+}
+
+// ========================================
+// FUNÇÕES DE UI
+// ========================================
+
+function showLoading(message = "Carregando...") {
+  if (errorMessage) {
+    errorMessage.textContent = `⏳ ${message}`;
+    errorMessage.style.display = "block";
+    errorMessage.style.backgroundColor = "#2196F3";
+    errorMessage.style.color = "white";
+  }
+}
+
+function hideLoading() {
+  if (errorMessage) {
+    errorMessage.style.display = "none";
+    errorMessage.style.backgroundColor = "";
+    errorMessage.style.color = "";
+  }
+}
+
 function showError(message) {
   if (!errorMessage || !resultsSection) return;
 
-  errorMessage.textContent = message;
+  errorMessage.textContent = `❌ ${message}`;
   errorMessage.style.display = "block";
+  errorMessage.style.backgroundColor = "#f44336";
+  errorMessage.style.color = "white";
   resultsSection.style.display = "none";
 
   // Scroll suave para o erro
   errorMessage.scrollIntoView({ behavior: "smooth", block: "center" });
 
-  // Esconder erro após 5 segundos
+  // Esconder erro após 8 segundos
   setTimeout(() => {
     errorMessage.style.display = "none";
-  }, 5000);
+  }, 8000);
 }
 
-// Função para exibir resultado
 function showResult(data) {
   if (!errorMessage || !resultsSection) return;
 
   // Esconder mensagem de erro
   errorMessage.style.display = "none";
 
-  // Preencher valores do resultado
-  const co2ResultElement = document.getElementById("co2-result");
-  const resultOrigemElement = document.getElementById("result-origem");
-  const resultDestinoElement = document.getElementById("result-destino");
-  const resultDistanceElement = document.getElementById("result-distance");
-  const resultTransportElement = document.getElementById("result-transport");
+  // Preencher resultado
+  const co2Result = document.getElementById("co2-result");
+  const resultOrigem = document.getElementById("result-origem");
+  const resultDestino = document.getElementById("result-destino");
+  const resultDistance = document.getElementById("result-distance");
+  const resultTransport = document.getElementById("result-transport");
 
-  if (co2ResultElement) co2ResultElement.textContent = data.emission;
-  if (resultOrigemElement) resultOrigemElement.textContent = data.origem;
-  if (resultDestinoElement) resultDestinoElement.textContent = data.destino;
-  if (resultDistanceElement) resultDistanceElement.textContent = data.distance;
-  if (resultTransportElement)
-    resultTransportElement.textContent = transportNames[data.transport];
+  if (co2Result) co2Result.textContent = data.emission;
+  if (resultOrigem) resultOrigem.textContent = data.origem;
+  if (resultDestino) resultDestino.textContent = data.destino;
+  if (resultDistance) resultDistance.textContent = data.distance;
+  if (resultTransport)
+    resultTransport.textContent = transportNames[data.transport];
 
-  // Exibir seção de resultado
+  // Mostrar seção de resultados
   resultsSection.style.display = "block";
 
   // Scroll suave para o resultado
   resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// Manipular envio do formulário
-if (form) {
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+// ========================================
+// INICIALIZAÇÃO
+// ========================================
 
-    // Verificar se os inputs existem antes de acessar
-    if (!origemInput || !destinoInput || !distanceInput) {
-      console.error("Erro: Campos do formulário não encontrados");
-      return;
-    }
-
-    // Coletar dados do formulário
-    const origem = origemInput.value.trim();
-    const destino = destinoInput.value.trim();
-    const distance = parseFloat(distanceInput.value);
-    const transport = selectedTransport;
-
-    // Validação no frontend
-    if (!origem) {
-      showError("Por favor, informe a cidade de origem");
-      return;
-    }
-
-    if (!destino) {
-      showError("Por favor, informe a cidade de destino");
-      return;
-    }
-
-    if (!manualDistanceCheckbox || !manualDistanceCheckbox.checked) {
-      showError('Por favor, marque a opção "Inserir distância manualmente"');
-      return;
-    }
-
-    if (!distance || distance <= 0) {
-      showError("Por favor, informe uma distância válida maior que zero");
-      return;
-    }
-
-    if (!transport) {
-      showError("Por favor, selecione um meio de transporte");
-      return;
-    }
-
-    // Desabilitar botão durante o envio
-    const submitButton = form.querySelector('button[type="submit"]');
-    if (!submitButton) return;
-
-    const originalButtonText = submitButton.textContent;
-    submitButton.textContent = "Calculando...";
-    submitButton.disabled = true;
-
-    try {
-      // Enviar requisição POST para /calculate
-      const response = await fetch("http://localhost:3000/calculate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          distance: distance,
-          transport: transport,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        // Exibir resultado formatado em kg de CO₂
-        showResult({
-          emission: result.emission,
-          origem: origem,
-          destino: destino,
-          distance: distance,
-          transport: transport,
-        });
-      } else {
-        // Exibir mensagens de erro retornadas pela API
-        showError(
-          result.error || "Erro ao calcular emissões. Tente novamente.",
-        );
-      }
-    } catch (error) {
-      console.error("Erro na requisição:", error);
-      showError(
-        "Erro de conexão com o servidor. Verifique se o servidor está rodando.",
-      );
-    } finally {
-      // Reabilitar botão
-      submitButton.textContent = originalButtonText;
-      submitButton.disabled = false;
-    }
+// Carregar estados quando a página carregar
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 DOM carregado! Iniciando aplicação...");
+  console.log("📍 Verificando elementos DOM:", {
+    form,
+    origemEstadoSelect,
+    origemCidadeSelect,
+    destinoEstadoSelect,
+    destinoCidadeSelect,
+    manualDistanceCheckbox,
+    distanceInput,
+    errorMessage,
+    resultsSection,
   });
-}
-
-// Limpar mensagens de erro ao digitar
-if (origemInput && destinoInput && distanceInput && errorMessage) {
-  const inputs = [origemInput, destinoInput, distanceInput];
-  inputs.forEach((input) => {
-    if (input) {
-      input.addEventListener("input", () => {
-        if (errorMessage.style.display === "block") {
-          errorMessage.style.display = "none";
-        }
-      });
-    }
-  });
-}
+  loadEstados();
+});
