@@ -24,6 +24,10 @@ const emissionFactors = {
 // devido a curvas, desvios, contornos de montanhas, etc.
 const HIGHWAY_CORRECTION_FACTOR = 1.25;
 
+// Constantes para cálculo de créditos de carbono
+const KG_PER_CARBON_CREDIT = 1000; // 1 crédito = 1000 kg de CO₂
+const CARBON_CREDIT_PRICE_BRL = 52.86; // Valor em reais por crédito
+
 // Cache para coordenadas das cidades (evitar chamadas repetidas)
 const coordinatesCache = new Map();
 
@@ -327,6 +331,14 @@ app.post("/calculate", async (req, res) => {
       },
     ];
 
+    // Calcular créditos de carbono necessários
+    const carbonCredits = parseFloat(
+      (emission / KG_PER_CARBON_CREDIT).toFixed(2),
+    );
+    const carbonCreditCost = parseFloat(
+      (carbonCredits * CARBON_CREDIT_PRICE_BRL).toFixed(2),
+    );
+
     // Resposta
     res.json({
       distance: parseFloat(distance.toFixed(2)),
@@ -337,6 +349,11 @@ app.post("/calculate", async (req, res) => {
         icon: transportIcons[transport],
         emission: emission,
         factor: emissionFactor,
+      },
+      carbonCredits: {
+        creditsNeeded: carbonCredits,
+        pricePerCredit: CARBON_CREDIT_PRICE_BRL,
+        totalCost: carbonCreditCost,
       },
       comparison,
     });

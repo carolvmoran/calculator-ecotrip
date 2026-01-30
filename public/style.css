@@ -314,6 +314,103 @@ footer {
   border-bottom: none;
 }
 
+/* Carbon Credits Section */
+.carbon-credits-section {
+  margin-top: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.carbon-credits-section h3 {
+  color: var(--dark-color);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carbon-subtitle {
+  color: #558b2f;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.carbon-credits-card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.credits-info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e8f5e9;
+}
+
+.credits-amount {
+  text-align: center;
+}
+
+.credits-number {
+  display: block;
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  line-height: 1;
+}
+
+.credits-label {
+  display: block;
+  margin-top: 8px;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.credits-cost {
+  text-align: center;
+}
+
+.cost-label {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.cost-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.credits-explanation {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.credits-explanation p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--dark-color);
+  font-size: 0.9rem;
+}
+
+.credits-explanation strong {
+  color: var(--primary-color);
+}
+
 /* Comparison Section */
 .comparison-section {
   margin-top: 30px;
@@ -440,5 +537,21 @@ footer {
 
   .comparison-section h3 {
     font-size: 1.3rem;
+  }
+
+  .carbon-credits-section h3 {
+    font-size: 1.3rem;
+  }
+
+  .credits-info {
+    flex-direction: column;
+  }
+
+  .credits-number {
+    font-size: 2.5rem;
+  }
+
+  .cost-value {
+    font-size: 1.8rem;
   }
 }

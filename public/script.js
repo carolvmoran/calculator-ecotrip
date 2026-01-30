@@ -403,6 +403,11 @@ function showResult(data) {
   if (resultTransport)
     resultTransport.textContent = transportNames[data.transport];
 
+  // Preencher créditos de carbono
+  if (data.carbonCredits) {
+    showCarbonCredits(data.carbonCredits);
+  }
+
   // Preencher comparação entre meios de transporte
   if (data.comparison) {
     showComparison(data.comparison, data.transport);
@@ -413,6 +418,22 @@ function showResult(data) {
 
   // Scroll suave para o resultado
   resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function showCarbonCredits(carbonCredits) {
+  const creditsAmount = document.getElementById("credits-amount");
+  const creditsCost = document.getElementById("credits-cost");
+
+  if (creditsAmount) {
+    creditsAmount.textContent = carbonCredits.creditsNeeded;
+  }
+
+  if (creditsCost) {
+    creditsCost.textContent = carbonCredits.totalCost.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 }
 
 function showComparison(comparison, selectedTransport) {
